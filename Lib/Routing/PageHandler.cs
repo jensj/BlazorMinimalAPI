@@ -1,10 +1,9 @@
-﻿using BlazorMinimalApis.Lib.Views;
+﻿using System.ComponentModel.DataAnnotations;
 using BlazorMinimalApis.Lib.Helpers;
 using BlazorMinimalApis.Lib.Validation;
+using BlazorMinimalApis.Lib.Views;
 using FluentValidation;
 using Microsoft.AspNetCore.Components.Endpoints;
-using System.ComponentModel.DataAnnotations;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BlazorMinimalApis.Lib.Routing;
 
@@ -15,13 +14,9 @@ public abstract class PageHandler
     public IResult Page<TComponent>(object data)
     {
         var componentData = data.ToDictionary();
-        if (Validation.HasErrors && Validation.Errors.Count > 0)
-        {
-            componentData.Add("Errors", Validation.Errors);
-        }
+        if (Validation is { HasErrors: true, Errors.Count: > 0 }) componentData.Add("Errors", Validation.Errors);
         var componentType = typeof(TComponent);
         return new RazorComponentResult(typeof(PageComponent), new { ComponentType = componentType, ComponentParameters = componentData });
-        // return new RazorComponentResult(typeof(TComponent), componentData);
     }
 
     public IResult Page<TComponent>()
@@ -39,11 +34,11 @@ public abstract class PageHandler
             validationResponse.HasErrors = true;
             foreach (var error in results)
             {
-                var ve = new ValidationError()
-                {
-                    Message = error.ErrorMessage,
-                    MemberName = error.MemberNames.First(),
-                };
+                var ve = new ValidationError
+                         {
+                             Message = error.ErrorMessage,
+                             MemberName = error.MemberNames.First()
+                         };
                 validationResponse.Errors.Add(ve);
             }
         }
@@ -51,6 +46,7 @@ public abstract class PageHandler
         {
             validationResponse.HasErrors = false;
         }
+
         Validation = validationResponse;
         return validationResponse;
     }
@@ -58,18 +54,18 @@ public abstract class PageHandler
     public ValidationResponse Validate<TData, TValidator>(TData data, TValidator validator) where TValidator : AbstractValidator<TData>
     {
         ValidationResponse validationResponse = new();
-        FluentValidation.Results.ValidationResult results = validator.Validate(data);
+        var results = validator.Validate(data);
 
         if (!results.IsValid)
         {
             validationResponse.HasErrors = true;
             foreach (var error in results.Errors)
             {
-                var ve = new ValidationError()
-                {
-                    Message = error.ErrorMessage,
-                    MemberName = error.PropertyName
-                };
+                var ve = new ValidationError
+                         {
+                             Message = error.ErrorMessage,
+                             MemberName = error.PropertyName
+                         };
                 validationResponse.Errors.Add(ve);
             }
         }
@@ -77,6 +73,7 @@ public abstract class PageHandler
         {
             validationResponse.HasErrors = false;
         }
+
         Validation = validationResponse;
         return validationResponse;
     }
@@ -84,18 +81,18 @@ public abstract class PageHandler
     public async Task<ValidationResponse> ValidateAsync<TData, TValidator>(TData data, TValidator validator) where TValidator : AbstractValidator<TData>
     {
         ValidationResponse validationResponse = new();
-        FluentValidation.Results.ValidationResult results = await validator.ValidateAsync(data);
+        var results = await validator.ValidateAsync(data);
 
         if (!results.IsValid)
         {
             validationResponse.HasErrors = true;
             foreach (var error in results.Errors)
             {
-                var ve = new ValidationError()
-                {
-                    Message = error.ErrorMessage,
-                    MemberName = error.PropertyName
-                };
+                var ve = new ValidationError
+                         {
+                             Message = error.ErrorMessage,
+                             MemberName = error.PropertyName
+                         };
                 validationResponse.Errors.Add(ve);
             }
         }
@@ -103,6 +100,7 @@ public abstract class PageHandler
         {
             validationResponse.HasErrors = false;
         }
+
         Validation = validationResponse;
         return validationResponse;
     }
@@ -115,7 +113,7 @@ public abstract class PageHandler
     public void AddError(string key, string message)
     {
         Validation.HasErrors = true;
-        Validation.Errors.Add(new ValidationError() { MemberName = key, Message = message });
+        Validation.Errors.Add(new ValidationError { MemberName = key, Message = message });
     }
 
     public IResult Redirect(string url)

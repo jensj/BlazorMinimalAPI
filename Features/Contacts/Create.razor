@@ -1,4 +1,5 @@
-﻿@inherits XComponentBase
+﻿@using BlazorMinimalApis.Endpoints.Pages.Shared.Layout
+@inherits BlazorMinimalApis.Lib.Views.XComponentBase
 @code {
     [Parameter]
     public CreateContactForm Form { get; set; } = new();
@@ -6,13 +7,10 @@
 
 <PageTitle>Add contacts</PageTitle>
 
-<LayoutView Layout="typeof(MainLayout)">
+<LayoutView Layout="GetLayout()">
     <h1 class="mb-8 text-3xl font-bold">
 
-        <a preload class="text-blue-500 hover:text-blue-600" href="@Link.GetPathByName("Contacts")">
-            Contacts
-        </a>
-
+        <a hx-target="#content" hx-swap="innerHTML" hx-get="@Link.GetPathByName("Contacts")" class="text-blue-500 hover:text-blue-600">Contacts</a>
         <span class="text-blue-500 font-medium">/</span>
         Create
     </h1>
@@ -20,7 +18,7 @@
     <FlashMessages />
 
     <div class="max-w-3xl bg-white rounded-md shadow overflow-hidden">
-        <form method="post" action="@Link.GetPathByName("Contacts.Store")" autocomplete="off">
+        <form hx-target="#content" hx-swap="innerHTML" hx-post="@Link.GetPathByName("Contacts.Store")" autocomplete="off">
             <div class="flex flex-wrap -mb-8 -mr-6 p-8">
                 <div class="pb-8 pr-6 w-full lg:w-1/2 space-y-2">
                     <label class="" for="Name">Name</label>

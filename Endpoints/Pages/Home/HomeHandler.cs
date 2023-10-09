@@ -1,9 +1,4 @@
-﻿using BlazorMinimalApis.Data;
-using BlazorMinimalApis.Lib;
-using BlazorMinimalApis.Lib.Routing;
-using Microsoft.AspNetCore.Components.Endpoints;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using BlazorMinimalApis.Lib.Routing;
 
 namespace BlazorMinimalApis.Endpoints.Pages.Home;
 
@@ -16,8 +11,6 @@ public class HomeHandler : PageHandler
 
     public IResult RandomNumber()
     {
-        Random rnd = new Random();
-        var Num = rnd.Next();
-        return Page<RandomNumber>(new { Num });
+        return Page<RandomNumber>(new { Num = new Random().Next() });
     }
 }

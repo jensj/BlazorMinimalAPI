@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Endpoints;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel;
+using BlazorMinimalApis.Features.Contacts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,6 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddAntiforgery();
 builder.Services.AddTransient<SessionManager>();
-builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options => {
     options.IdleTimeout = TimeSpan.FromMinutes(1);
 });
@@ -37,6 +37,9 @@ app.UseStaticFiles();
 app.UseSession();
 
 app.MapPageEndpoints();
+
+app.AddContactFeature();
+
 app.MapApiEndpoints();
 
 app.Run();
